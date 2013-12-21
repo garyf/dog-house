@@ -1,5 +1,7 @@
 # Dog House
 
+[![Code Climate](https://codeclimate.com/github/garyf/dog-house.png)](https://codeclimate.com/github/garyf/dog-house)
+
 Dog House is a Ruby module that throttles resource requests within a Rails application.
 
 ## How it works
