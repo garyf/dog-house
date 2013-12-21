@@ -13,13 +13,14 @@ module RequestRateLimit
   # otherwise, if the WINDOW_LIMIT of requests is exceeded
   #   - a 'waiting period' of RESTRAIN_SECONDS begins
   #   - during the waiting period, requests redirect to a static template
-  # after the waiting period has passed, requests are unrestrained
+  # after the time window or waiting period end,
+  # a fresh time window starts upon the next request
 
   def within_window(sec_now)
     window_count = session[:window_count]
     if window_count >= WINDOW_LIMIT
       session[:request_restrained] = true
-      session[:sec_restrained] = sec_now # impose a wait of WINDOW_SECONDS duration
+      session[:sec_restrained] = sec_now # impose a wait of RESTRAIN_SECONDS duration
     else
       session[:window_count] += 1
     end
