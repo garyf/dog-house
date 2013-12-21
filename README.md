@@ -26,15 +26,18 @@ Add these files to your Rails app:
 - **/app/controllers/concerns/request\_rate\_limit.rb** 
 - **/spec/controllers/concerns/request\_rate\_limit\_spec.rb**
 
-Within your ApplicationController, include the RequestRateLimit module and add a private method to redirect to your desired 'dog house' route, e.g.
+Within your ApplicationController, include the RequestRateLimit module
 
 ``` ruby
 include RequestRateLimit
+```
 
-private
+Within the RequestRateLimit module, modify the :request\_able\_required method to redirect to your desired 'dog house' route, for example:
 
-rescue_from RequestRateLimit::Restrained do
-  redirect_to(static_index_path, alert: 'Your access is now restrained due to an excessive number of recent requests')
+``` ruby
+def request_able_required
+  return unless request_restrained?
+  redirect_to(static_index_path, alert: 'Your access is now suspended due to a rapid series of recent requests')
 end
 ```
 

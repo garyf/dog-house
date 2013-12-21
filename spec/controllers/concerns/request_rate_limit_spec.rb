@@ -21,7 +21,7 @@ describe PeopleController do
           session[:window_count] = RequestRateLimit::WINDOW_LIMIT
           get :index
         end
-        it do
+        it 'restrain' do
           expect(session[:window_count]).to eql RequestRateLimit::WINDOW_LIMIT
           expect(session[:request_restrained]).to be true
           expect(session[:sec_restrained]).to eql earlier 0
@@ -41,7 +41,7 @@ describe PeopleController do
       end
     end
 
-    context '#restrained' do
+    context '#while_restrained' do
       before do
         session[:request_restrained] = true
         session[:sec_start] = earlier RequestRateLimit::WINDOW_SECONDS
@@ -51,9 +51,9 @@ describe PeopleController do
           session[:sec_restrained] = earlier RequestRateLimit::WINDOW_SECONDS
           get :index
         end
-        it do
+        it 'restart the waiting period' do
           expect(session[:request_restrained]).to be true
-          expect(session[:sec_restrained]).to eql earlier RequestRateLimit::WINDOW_SECONDS
+          expect(session[:sec_restrained]).to eql earlier 0
         end
       end
 
@@ -62,7 +62,7 @@ describe PeopleController do
           session[:sec_restrained] = earlier RequestRateLimit::RESTRAIN_SECONDS + 1
           get :index
         end
-        it do
+        it 'start a fresh time window' do
           expect(session[:request_restrained]).to be false
           expect(session[:sec_restrained]).to be nil
           expect(session[:sec_start]).to eql earlier 0
@@ -100,7 +100,7 @@ describe PeopleController do
         Timecop.freeze @time_0 + 6
         get :index
       end
-      it do
+      it 'restrain' do
         expect(session[:sec_start]).to eql earlier 6
         expect(session[:window_count]).to eql 5
         expect(session[:request_restrained]).to be true
@@ -113,11 +113,11 @@ describe PeopleController do
           Timecop.freeze @time_0 + @sec_start_to_now
           get :index
         end
-        it 'w request_restrained?'  do
+        it 'restart the waiting period'  do
           expect(session[:sec_start]).to eql earlier @sec_start_to_now
           expect(session[:window_count]).to eql 5
           expect(session[:request_restrained]).to be true
-          expect(session[:sec_restrained]).to eql earlier RequestRateLimit::RESTRAIN_SECONDS
+          expect(session[:sec_restrained]).to eql earlier 0
         end
       end
 
@@ -127,8 +127,8 @@ describe PeopleController do
           Timecop.freeze @time_0 + @sec_start_to_now
           get :index
         end
-        it 'w/o request_restrained?' do
-          expect(session[:sec_start]).to eql earlier 0 # window restarted
+        it 'start a fresh time window' do
+          expect(session[:sec_start]).to eql earlier 0
           expect(session[:window_count]).to eql 0
           expect(session[:request_restrained]).to be false
           expect(session[:sec_restrained]).to be nil

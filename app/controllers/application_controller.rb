@@ -8,9 +8,4 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-private
-
-  rescue_from RequestRateLimit::Restrained do
-    redirect_to(static_index_path, alert: 'Your access is now restrained due to an excessive number of recent requests')
-  end
 end
