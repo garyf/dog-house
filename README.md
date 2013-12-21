@@ -24,7 +24,19 @@ Add these files to your Rails app:
 - **/app/controllers/concerns/request\_rate\_limit.rb** 
 - **/spec/controllers/concerns/request\_rate\_limit\_spec.rb**
 
-Within those controllers for which you want in-app request throttling:
+Within your ApplicationController, include the RequestRateLimit module and add a private method to redirect to your desired 'dog house' route, e.g.
+
+``` ruby
+include RequestRateLimit
+
+private
+
+rescue_from RequestRateLimit::Restrained do
+  redirect_to(static_index_path, alert: 'Your access is now restrained due to an excessive number of recent requests')
+end
+```
+
+Within those controllers for which you want request throttling:
 
 ``` ruby
 before_action :request_able_required
@@ -45,6 +57,13 @@ bundle exec rake db:create:all
 bundle exec rake db:migrate
 rails s
 ```
+
+## Other approaches
+
+Intentionally, Dog House takes a lightweight approach to rate limiting. Potentially more robust alternatives that use Rack middleware include:
+
+* [rack-attack](https://github.com/kickstarter/rack-attack) by [Kickstarter](https://github.com/kickstarter)
+* [rack-throttle](https://github.com/datagraph/rack-throttle) by [Datagraph](github.com/datagraph)
 
 ## Why 'Dog House'
 

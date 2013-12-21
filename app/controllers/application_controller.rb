@@ -11,6 +11,6 @@ class ApplicationController < ActionController::Base
 private
 
   rescue_from RequestRateLimit::Restrained do
-    redirect_to(root_path, alert: 'Your access is now restrained due to an excessive number of recent requests')
+    redirect_to(static_index_path, alert: 'Your access is now restrained due to an excessive number of recent requests')
   end
 end
