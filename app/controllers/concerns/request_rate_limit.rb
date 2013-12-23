@@ -58,9 +58,4 @@ module RequestRateLimit
     end
     session[:request_restrained]
   end
-
-  def request_able_required
-    return unless request_restrained?
-    redirect_to(static_index_path, alert: 'Your access is now suspended due to a rapid series of recent requests')
-  end
 end

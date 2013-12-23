@@ -135,6 +135,7 @@ describe PeopleController do
         end
       end
     end
+    after { Timecop.return }
   end
 
 private
